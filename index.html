@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="2022 월드컵 황희찬 역전골 장면의 xT 변화를 재구성한 영상 두 개">
+<title>황희찬 역전골 xT</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Barlow+Condensed:wght@600;700&display=swap">
+<style>
+/* 배치: 한 화면 — 위에 경기 한 줄, 영상 고르기 두 칸, 그 아래 큰 영상과 설명. 폰에서 QR로 여는 걸 먼저 생각한 세로 한 줄 */
+:root{
+  /* 밝은 한 가지 모습: 연한 잔디빛 바탕 · 흰 카드 · 짙은 초록 글자 · 선명한 잔디색 강조 */
+  --bg:#f2f8f0; --card:#ffffff; --line:#cfe1d3; --ink:#11261a; --dim:#4f6a5b;
+  --accent:#0c8a47; --sel:#e2f5e8;
+  --f-display:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-num:"Barlow Condensed","Arial Narrow",sans-serif;
+  color-scheme:light;
+}
+html,body{height:auto}
+html,body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-display);font-size:15px;line-height:1.55;
+  padding-block:20px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto;display:grid;gap:16px}
+header{display:grid;gap:4px}
+.eyebrow{font-family:var(--f-num);font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{margin:0;font-weight:900;font-size:clamp(22px,5.6vw,32px);line-height:1.2;text-wrap:balance}
+.score{font-family:var(--f-num);font-weight:700;font-size:17px;color:var(--dim);letter-spacing:.03em}
+.score b{color:var(--ink)}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pick button{all:unset;box-sizing:border-box;cursor:pointer;display:grid;gap:2px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);min-width:0}
+.pick button .n{font-family:var(--f-num);font-weight:700;font-size:13px;letter-spacing:.1em;color:var(--dim)}
+.pick button .t{font-weight:700;font-size:15px;line-height:1.3}
+.pick button .s{font-size:12px;color:var(--dim)}
+.pick button{box-shadow:0 1px 2px rgba(17,38,26,.06)}
+.pick button[aria-pressed="true"]{border-color:var(--accent);background:var(--sel);box-shadow:0 2px 10px rgba(12,138,71,.16)}
+.pick button[aria-pressed="true"] .n{color:var(--accent)}
+.pick button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stage{border-radius:12px;overflow:hidden;background:#0b1410;border:1px solid var(--line);box-shadow:0 6px 22px rgba(17,38,26,.14);aspect-ratio:16/9;max-width:100%;display:grid;place-items:center}
+.stage video{width:100%;height:100%;display:block;background:#000}
+.stage .wait{color:#b9c9be;font-size:14px;padding:16px;text-align:center}
+.about{display:grid;gap:8px}
+.about h2{margin:0;font-size:17px;font-weight:700}
+.about p{margin:0;color:var(--dim);max-width:62ch}
+.about p b{color:var(--ink);font-weight:700}
+.note{border-top:1px solid var(--line);padding-top:12px;font-size:12.5px;color:var(--dim);max-width:70ch}
+.src{display:grid;gap:6px;font-size:12.5px;color:var(--dim);max-width:70ch}
+.src h2{margin:0;font-family:var(--f-num);font-weight:700;font-size:13px;letter-spacing:.12em;color:var(--accent)}
+.src ul{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.src li b{color:var(--ink);font-weight:700;margin-right:6px}
+@media (max-width:420px){.pick button{padding:10px 11px}.pick button .t{font-size:14px}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">2022 월드컵 · H조 3차전</div>
+    <h1>황희찬 역전골, 위협(xT)은 어떻게 커졌나</h1>
+    <div class="score">대한민국 <b>2 : 1</b> 포르투갈 · 90+1분</div>
+  </header>
+
+  <div class="pick" role="group" aria-label="영상 고르기">
+    <button id="pickTree" aria-pressed="true"><span class="n">영상 1</span><span class="t">표 하나로 보기</span><span class="s">결정 트리 × Transformer</span></button>
+    <button id="pickAll" aria-pressed="false"><span class="n">영상 2</span><span class="t">12개 표 비교</span><span class="s">분할 4 × 모델 3 + 기여도</span></button>
+  </div>
+
+  <div class="stage"><video id="vid" controls playsinline preload="metadata" hidden></video><div class="wait" id="wait">영상을 불러오는 중입니다.</div></div>
+
+  <div class="about">
+    <h2 id="abTitle"></h2>
+    <p id="abText"></p>
+  </div>
+
+  <p class="note">실제 중계 화면이 아니라, 경기 영상에서 선수와 공의 위치를 읽어 축구 게임 「킥오프 일레븐」의 화면으로 다시 그린 재구성입니다. 화면에 안 잡힌 선수와 일부 구간의 움직임은 추정입니다. xT(위협 기대값)는 공이 있는 자리에서 10초 안에 골이 날 확률을 뜻합니다.</p>
+
+  <section class="src" aria-labelledby="srcH">
+    <h2 id="srcH">출처</h2>
+    <ul>
+      <li><b>xT 표</b> 2026 기초 R&amp;E 연구에서 만든 표(분할 4가지 × 모델 3가지). StatsBomb Open Data 2015/16 시즌 971경기로 학습.</li>
+      <li><b>경기 기록</b> StatsBomb Open Data — 2022 FIFA 월드컵, 경기 번호 3857262(이벤트·360 자료). 선수 이름, 사건 시각, 슛의 xG에 사용.</li>
+      <li><b>선수·공 위치</b> 경기 하이라이트 영상의 넓은 화면 구간(약 17초)에서 직접 추적.</li>
+      <li><b>화면</b> 직접 만든 축구 게임 「킥오프 일레븐」의 렌더러.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const VIDEOS = {
+  tree: { src: 'tree.mp4', poster: 'poster_tree.jpg', title: '영상 1 · 표 하나로 보기', text: '코너킥을 걷어낸 뒤 손흥민이 공을 잡아 몰고 올라가 황희찬에게 내주기까지, 공이 있는 자리의 xT가 <b>0.2% → 드리블 2.5% → 패스 7.2%</b>로 커지는 과정을 한 가지 표(결정 트리 분할 × Transformer 모델)로 보여 줍니다.' },
+  all: { src: 'all.mp4', poster: 'poster_all.jpg', title: '영상 2 · 12개 표 비교', text: '같은 장면을 분할 4가지 × 모델 3가지, <b>12개 표</b>로 한 화면에서 비교합니다. 12개 평균으로 드리블 +2.0%p, 패스 +4.2%p이고, 12개 중 9개 표에서 패스의 기여가 드리블보다 큽니다.' },
+};
+const vid = document.getElementById('vid'), wait = document.getElementById('wait');
+const btn = { tree: document.getElementById('pickTree'), all: document.getElementById('pickAll') };
+let cur = '';
+function show(k) {
+  if (!VIDEOS[k]) k = 'tree'; if (k === cur) return; cur = k; const v = VIDEOS[k];
+  for (const n in btn) btn[n].setAttribute('aria-pressed', n === k ? 'true' : 'false');
+  document.getElementById('abTitle').textContent = v.title; document.getElementById('abText').innerHTML = v.text;
+  if (v.src) { vid.pause(); if (v.poster) vid.poster = v.poster; else vid.removeAttribute('poster'); vid.src = v.src; vid.hidden = false; wait.hidden = true; vid.load(); }
+  else { vid.hidden = true; wait.hidden = false; wait.textContent = '영상이 아직 올라오지 않았습니다.'; }
+}
+btn.tree.addEventListener('click', () => { location.hash = 'tree'; show('tree'); });
+btn.all.addEventListener('click', () => { location.hash = 'all'; show('all'); });
+window.addEventListener('hashchange', () => show(location.hash.slice(1)));
+vid.addEventListener('error', () => { vid.hidden = true; wait.hidden = false; wait.textContent = '영상을 불러오지 못했습니다. 페이지를 새로 고쳐 주세요.'; });
+show(location.hash.slice(1) || 'tree');
+</script>
+</body>
+</html>
