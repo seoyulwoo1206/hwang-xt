@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="2022 월드컵 황희찬 역전골 장면의 xT 변화를 xT 표 12개(분할 4 × 모델 3) 각각으로, 그리고 한 화면 비교로 재구성한 영상">
+<meta name="description" content="2022 월드컵 황희찬 역전골 장면의 xT 변화를 xT 표(분할 4 × 모델 3 × T 5초·10초·15초) 각각으로, 그리고 한 화면 비교로 재구성한 영상">
 <title>황희찬 역전골 xT</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Barlow+Condensed:wght@600;700&display=swap">
 <style>
@@ -33,10 +33,11 @@ h1{margin:0;font-weight:900;font-size:clamp(22px,5.6vw,32px);line-height:1.2;tex
 .pick button .n{font-family:var(--f-num);font-weight:700;font-size:13px;letter-spacing:.1em;color:var(--dim)}
 .pick button .t{font-weight:700;font-size:15px;line-height:1.3}
 .pick button .s{font-size:12px;color:var(--dim)}
+.nw{white-space:nowrap}
 .pick button{box-shadow:0 1px 2px rgba(17,38,26,.06)}
 .pick button[aria-pressed="true"]{border-color:var(--accent);background:var(--sel);box-shadow:0 2px 10px rgba(12,138,71,.16)}
 .pick button[aria-pressed="true"] .n{color:var(--accent)}
-.pick button:focus-visible,.mx button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pick button:focus-visible,.mx button:focus-visible,.ts button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 /* 표 고르기: 줄 = 분할, 칸 = 모델, 숫자 = 황희찬이 받은 순간의 xT */
 .choose{display:grid;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 12px 14px}
 .choose .cap{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;justify-content:space-between}
@@ -47,6 +48,10 @@ h1{margin:0;font-weight:900;font-size:clamp(22px,5.6vw,32px);line-height:1.2;tex
 .mx .ml{font-family:var(--f-num);font-weight:700;font-size:15px;line-height:1.1;display:flex;align-items:center;padding-right:6px;color:var(--ink)}
 .mx button{all:unset;box-sizing:border-box;cursor:pointer;min-height:44px;display:grid;place-items:center;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);font-family:var(--f-num);font-weight:700;font-size:19px;color:var(--ink);font-variant-numeric:tabular-nums}
 .mx button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:#fff;box-shadow:0 2px 10px rgba(12,138,71,.22)}
+.trow{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between;font-size:13px;color:var(--dim)}
+.ts{display:inline-flex;gap:6px}
+.ts button{all:unset;box-sizing:border-box;cursor:pointer;min-width:56px;min-height:38px;padding:0 12px;display:grid;place-items:center;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);font-weight:700;font-size:14px;color:var(--ink)}
+.ts button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:#fff}
 .stage{border-radius:12px;overflow:hidden;background:#0b1410;border:1px solid var(--line);box-shadow:0 6px 22px rgba(17,38,26,.14);aspect-ratio:16/9;max-width:100%;display:grid;place-items:center}
 .stage video{width:100%;height:100%;display:block;background:#000}
 .stage .wait{color:#b9c9be;font-size:14px;padding:16px;text-align:center}
@@ -72,12 +77,13 @@ h1{margin:0;font-weight:900;font-size:clamp(22px,5.6vw,32px);line-height:1.2;tex
   </header>
 
   <div class="pick" role="group" aria-label="보기 방식">
-    <button id="pickOne" aria-pressed="true"><span class="n">표 하나씩</span><span class="t">표 하나로 보기</span><span class="s" id="oneSub">분할 4 × 모델 3 중에서 고르기</span></button>
-    <button id="pickAll" aria-pressed="false"><span class="n">한 화면에</span><span class="t">12개 표 비교</span><span class="s">분할 4 × 모델 3 + 기여도</span></button>
+    <button id="pickOne" aria-pressed="true"><span class="n">표 하나씩</span><span class="t">표 하나로 보기</span><span class="s" id="oneSub">분할 4 × 모델 3 × T 중에서 고르기</span></button>
+    <button id="pickAll" aria-pressed="false"><span class="n">한 화면에</span><span class="t">12개 표 비교</span><span class="s">분할 4 × 모델 3 + 기여도 · <span class="nw">T 10초</span></span></button>
   </div>
 
   <section class="choose" id="choose" aria-labelledby="chH">
     <div class="cap"><b id="chH">xT 표 고르기 — 분할(줄) × 모델(칸)</b><span>숫자 = 황희찬이 패스를 받은 순간의 xT</span></div>
+    <div class="trow"><span id="tsH">T — 몇 초 안의 득점을 볼지</span><div class="ts" id="ts" role="group" aria-labelledby="tsH"></div></div>
     <div class="mx" id="mx"></div>
   </section>
 
@@ -88,7 +94,7 @@ h1{margin:0;font-weight:900;font-size:clamp(22px,5.6vw,32px);line-height:1.2;tex
     <p id="abText"></p>
   </div>
 
-  <p class="note">실제 중계 화면이 아니라, 경기 영상에서 선수와 공의 위치를 읽어 축구 게임 「킥오프 일레븐」의 화면으로 다시 그린 재구성입니다. 화면에 안 잡힌 선수와 일부 구간의 움직임은 추정입니다. xT(위협 기대값)는 공이 있는 자리에서 10초 안에 골이 날 확률을 뜻합니다. 영상 12개는 장면은 같고 xT 표만 다릅니다.</p>
+  <p class="note">실제 중계 화면이 아니라, 경기 영상에서 선수와 공의 위치를 읽어 축구 게임 「킥오프 일레븐」의 화면으로 다시 그린 재구성입니다. 화면에 안 잡힌 선수와 일부 구간의 움직임은 추정입니다. xT(위협 기대값)는 공이 있는 자리에서 T초(5초·10초·15초 중 고름) 안에 골이 날 확률을 뜻합니다. 영상들은 장면은 같고 xT 표만 다릅니다.</p>
 
   <section class="src" aria-labelledby="srcH">
     <h2 id="srcH">출처</h2>
@@ -102,53 +108,75 @@ h1{margin:0;font-weight:900;font-size:clamp(22px,5.6vw,32px);line-height:1.2;tex
 </div>
 
 <script>
-/* 표마다의 값(%): [공 잡은 순간, 패스 직전, 받은 순간, 드리블이 올린 값, 패스가 올린 값] — 영상 속 숫자와 같다 (T 10초) */
+/* 표마다의 값(%): [공 잡은 순간, 패스 직전, 받은 순간, 드리블이 올린 값, 패스가 올린 값] — 영상 속 숫자와 같다. 첫 열쇠 = T(몇 초 안의 득점을 보나) */
 const PARTS = [['uniform', 'Uniform'], ['quadtree', 'Quadtree'], ['tree', 'Decision Tree'], ['threat', 'Threat Grid']];
 const MODELS = [['dtmc', 'DTMC'], ['smp', 'SMP'], ['tf', 'Transformer']];
+const TS = [['5', '5초'], ['10', '10초'], ['15', '15초']]; // 영상이 있는 T만
 const V = {
-  uniform: { dtmc: [0.1, 1.4, 7.1, 1.3, 5.7], smp: [0.1, 1.3, 7.1, 1.2, 5.8], tf: [0.1, 1.4, 5.2, 1.3, 3.8] },
-  quadtree: { dtmc: [0.1, 3.7, 3.7, 3.6, 0], smp: [0.1, 3.6, 3.6, 3.5, 0], tf: [0.1, 4.4, 4.4, 4.3, 0] },
-  tree: { dtmc: [0.1, 1.5, 7.7, 1.4, 6.2], smp: [0.1, 1.3, 7.7, 1.2, 6.4], tf: [0.2, 2.5, 7.2, 2.4, 4.7] },
-  threat: { dtmc: [0.1, 1.3, 7.9, 1.2, 6.6], smp: [0.1, 1.3, 7.9, 1.2, 6.6], tf: [0.1, 1.1, 6.3, 1.0, 5.2] },
+  '5': {
+    uniform: { dtmc: [0.0, 0.9, 6.8, 0.8, 5.9], smp: [0.0, 0.8, 6.7, 0.8, 5.9], tf: [0.0, 1.1, 5.4, 1.1, 4.3] },
+    quadtree: { dtmc: [0.0, 3.4, 3.4, 3.3, 0], smp: [0.0, 3.1, 3.1, 3.1, 0], tf: [0.0, 4.1, 4.1, 4.1, 0] },
+    tree: { dtmc: [0.0, 1.2, 7.6, 1.1, 6.5], smp: [0.0, 0.9, 7.4, 0.8, 6.5], tf: [0.0, 2.0, 6.7, 1.9, 4.7] },
+    threat: { dtmc: [0.0, 0.9, 7.6, 0.9, 6.7], smp: [0.0, 0.8, 7.5, 0.8, 6.7], tf: [0.0, 0.7, 5.5, 0.7, 4.8] },
+  },
+  '10': {
+    uniform: { dtmc: [0.1, 1.4, 7.1, 1.3, 5.7], smp: [0.1, 1.3, 7.1, 1.2, 5.8], tf: [0.1, 1.4, 5.2, 1.3, 3.8] },
+    quadtree: { dtmc: [0.1, 3.7, 3.7, 3.6, 0], smp: [0.1, 3.6, 3.6, 3.5, 0], tf: [0.1, 4.4, 4.4, 4.3, 0] },
+    tree: { dtmc: [0.1, 1.5, 7.7, 1.4, 6.2], smp: [0.1, 1.3, 7.7, 1.2, 6.4], tf: [0.2, 2.5, 7.2, 2.4, 4.7] },
+    threat: { dtmc: [0.1, 1.3, 7.9, 1.2, 6.6], smp: [0.1, 1.3, 7.9, 1.2, 6.6], tf: [0.1, 1.1, 6.3, 1.0, 5.2] },
+  },
+  '15': {
+    uniform: { dtmc: [0.3, 1.5, 7.2, 1.2, 5.7], smp: [0.2, 1.4, 7.1, 1.2, 5.7], tf: [0.2, 1.5, 5.4, 1.4, 3.8] },
+    quadtree: { dtmc: [0.2, 3.8, 3.8, 3.6, 0], smp: [0.2, 3.8, 3.8, 3.5, 0], tf: [0.2, 4.0, 4.0, 3.8, 0] },
+    tree: { dtmc: [0.2, 1.6, 7.8, 1.3, 6.2], smp: [0.2, 1.5, 7.7, 1.3, 6.2], tf: [0.3, 2.5, 7.3, 2.3, 4.8] },
+    threat: { dtmc: [0.2, 1.5, 7.9, 1.3, 6.5], smp: [0.2, 1.4, 7.9, 1.2, 6.5], tf: [0.2, 1.2, 6.9, 1.0, 5.8] },
+  },
 };
-const ALL = { src: 'all.mp4', poster: 'poster_all.jpg', title: '12개 표 비교', text: '같은 장면을 분할 4가지 × 모델 3가지, <b>12개 표</b>로 한 화면에서 비교합니다. 12개 평균으로 드리블 +2.0%p, 패스 +4.2%p이고, 12개 중 9개 표에서 패스의 기여가 드리블보다 큽니다. ★는 연구에서 성능 1위인 Decision Tree · SMP 조합입니다.' };
+const ALL = { src: 'all.mp4', poster: 'poster_all.jpg', title: '12개 표 비교 · T 10초', text: '같은 장면을 분할 4가지 × 모델 3가지, <b>12개 표</b>로 한 화면에서 비교합니다(T 10초). 12개 평균으로 드리블 +2.0%p, 패스 +4.2%p이고, 12개 중 9개 표에서 패스의 기여가 드리블보다 큽니다. ★는 연구에서 성능 1위인 Decision Tree · SMP 조합입니다.' };
+const DEF = 'tree-smp-10'; // 처음 뜨는 표: 연구에서 성능 1위 조합, T 10초
 const nameOf = (list, k) => list.find(e => e[0] === k)[1], f1 = x => x.toFixed(1);
-function one(p, m) {
-  const v = V[p][m], nm = `${nameOf(PARTS, p)} · ${nameOf(MODELS, m)}`;
-  let text = `코너킥을 걷어낸 뒤 손흥민이 공을 잡아 몰고 올라가 황희찬에게 내주기까지, 공이 있는 자리의 xT가 <b>${f1(v[0])}% → 드리블 ${f1(v[1])}% → 패스 ${f1(v[2])}%</b>로 커집니다. 이 표로는 드리블이 +${f1(v[3])}%p, 패스가 +${f1(v[4])}%p를 올렸습니다.`;
+function one(p, m, T) {
+  const v = V[T][p][m], tn = nameOf(TS, T), nm = `${nameOf(PARTS, p)} · ${nameOf(MODELS, m)}`;
+  let text = `코너킥을 걷어낸 뒤 손흥민이 공을 잡아 몰고 올라가 황희찬에게 내주기까지, 공이 있는 자리의 xT(${tn} 안에 득점할 확률)가 <b>${f1(v[0])}% → 드리블 ${f1(v[1])}% → 패스 ${f1(v[2])}%</b>로 커집니다. 이 표로는 드리블이 +${f1(v[3])}%p, 패스가 +${f1(v[4])}%p를 올렸습니다.`;
   if (p === 'quadtree') text += ' Quadtree 분할에서는 패스를 준 곳과 받은 곳이 같은 구역이라 패스의 값이 0으로 나옵니다.';
-  return { src: `v/${p}_${m}.mp4`, poster: `v/${p}_${m}.jpg`, title: nm, text, nm };
+  const file = `v/${p}_${m}` + (T === '10' ? '' : '_' + T); // T 10초 영상은 이름에 T가 없다
+  return { src: file + '.mp4', poster: file + '.jpg', title: `${nm} · T ${tn}`, text, sub: `${nm} · <span class="nw">T ${tn}</span>` };
 }
-const vid = document.getElementById('vid'), wait = document.getElementById('wait'), mx = document.getElementById('mx');
+const vid = document.getElementById('vid'), wait = document.getElementById('wait'), mx = document.getElementById('mx'), ts = document.getElementById('ts');
 const bOne = document.getElementById('pickOne'), bAll = document.getElementById('pickAll');
+const hashOf = k => k.endsWith('-10') ? k.slice(0, -3) : k; // T 10초는 주소에 안 적는다(예전 주소 그대로)
+const go = k => { location.hash = hashOf(k); show(hashOf(k)); };
+let cur = '', last = DEF;
+// T 고르기
+const tBtn = {};
+for (const [T, tn] of TS) { const b = document.createElement('button'); b.type = 'button'; b.textContent = tn; b.addEventListener('click', () => { const [p, m] = last.split('-'); go(`${p}-${m}-${T}`); }); tBtn[T] = b; ts.appendChild(b); }
 // 고르기 표: 머리줄(모델) + 분할마다 한 줄
 mx.appendChild(document.createElement('span'));
 for (const [, mn] of MODELS) { const h = document.createElement('span'); h.className = 'mh'; h.textContent = mn; mx.appendChild(h); }
 const cells = {};
 for (const [p, pn] of PARTS) {
   const l = document.createElement('span'); l.className = 'ml'; l.textContent = pn; mx.appendChild(l);
-  for (const [m, mn] of MODELS) {
-    const b = document.createElement('button'); b.type = 'button'; b.textContent = f1(V[p][m][2]) + '%'; b.setAttribute('aria-label', `${pn}, ${mn}, 받은 순간 xT ${f1(V[p][m][2])}%`);
-    b.addEventListener('click', () => { location.hash = `${p}-${m}`; show(`${p}-${m}`); }); cells[`${p}-${m}`] = b; mx.appendChild(b);
-  }
+  for (const [m] of MODELS) { const b = document.createElement('button'); b.type = 'button'; b.addEventListener('click', () => go(`${p}-${m}-${last.split('-')[2]}`)); cells[`${p}-${m}`] = b; mx.appendChild(b); }
 }
-const DEF = 'tree-smp'; // 처음 뜨는 표: 연구에서 성능 1위 조합
-let cur = '', last = DEF;
-function show(k) {
-  if (k !== 'all' && !cells[k]) k = DEF; // 예전 주소(#tree)·빈 주소도 여기로
-  if (k === cur) return; cur = k;
+function paint() { // 고른 T의 숫자와 눌린 칸
+  const [lp, lm, T] = last.split('-');
+  for (const [p, pn] of PARTS) for (const [m, mn] of MODELS) { const b = cells[`${p}-${m}`], x = f1(V[T][p][m][2]) + '%'; b.textContent = x; b.setAttribute('aria-label', `${pn}, ${mn}, 받은 순간 xT ${x}`); b.setAttribute('aria-pressed', p === lp && m === lm ? 'true' : 'false'); }
+  for (const t in tBtn) tBtn[t].setAttribute('aria-pressed', t === T ? 'true' : 'false');
+}
+function parse(h) { if (h === 'all') return 'all'; const [p, m, T = '10'] = h.split('-'); return V[T] && V[T][p] && V[T][p][m] ? `${p}-${m}-${T}` : DEF; } // 예전 주소(#tree)·빈 주소는 기본 표
+function show(h) {
+  const k = parse(h); if (k === cur) return; cur = k;
   const isAll = k === 'all', v = isAll ? ALL : one(...k.split('-')); if (!isAll) last = k;
   bOne.setAttribute('aria-pressed', isAll ? 'false' : 'true'); bAll.setAttribute('aria-pressed', isAll ? 'true' : 'false');
-  document.getElementById('choose').hidden = isAll; document.getElementById('oneSub').textContent = one(...last.split('-')).nm;
-  for (const n in cells) cells[n].setAttribute('aria-pressed', n === k ? 'true' : 'false');
+  document.getElementById('choose').hidden = isAll; document.getElementById('oneSub').innerHTML = one(...last.split('-')).sub; paint();
   document.getElementById('abTitle').textContent = v.title; document.getElementById('abText').innerHTML = v.text;
   vid.pause(); vid.poster = v.poster; vid.src = v.src; vid.hidden = false; wait.hidden = true; vid.load();
 }
-bOne.addEventListener('click', () => { location.hash = last; show(last); });
+bOne.addEventListener('click', () => go(last));
 bAll.addEventListener('click', () => { location.hash = 'all'; show('all'); });
 window.addEventListener('hashchange', () => show(location.hash.slice(1)));
 vid.addEventListener('error', () => { vid.hidden = true; wait.hidden = false; wait.textContent = '영상을 불러오지 못했습니다. 페이지를 새로 고쳐 주세요.'; });
-show(location.hash.slice(1) || DEF);
+show(location.hash.slice(1));
 </script>
 </body>
 </html>
