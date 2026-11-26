@@ -111,7 +111,7 @@ const V = {
   tree: { dtmc: [0.1, 1.5, 7.7, 1.4, 6.2], smp: [0.1, 1.3, 7.7, 1.2, 6.4], tf: [0.2, 2.5, 7.2, 2.4, 4.7] },
   threat: { dtmc: [0.1, 1.3, 7.9, 1.2, 6.6], smp: [0.1, 1.3, 7.9, 1.2, 6.6], tf: [0.1, 1.1, 6.3, 1.0, 5.2] },
 };
-const ALL = { src: 'all.mp4', poster: 'poster_all.jpg', title: '12개 표 비교', text: '같은 장면을 분할 4가지 × 모델 3가지, <b>12개 표</b>로 한 화면에서 비교합니다. 12개 평균으로 드리블 +2.0%p, 패스 +4.2%p이고, 12개 중 9개 표에서 패스의 기여가 드리블보다 큽니다.' };
+const ALL = { src: 'all.mp4', poster: 'poster_all.jpg', title: '12개 표 비교', text: '같은 장면을 분할 4가지 × 모델 3가지, <b>12개 표</b>로 한 화면에서 비교합니다. 12개 평균으로 드리블 +2.0%p, 패스 +4.2%p이고, 12개 중 9개 표에서 패스의 기여가 드리블보다 큽니다. ★는 연구에서 성능 1위인 Decision Tree · SMP 조합입니다.' };
 const nameOf = (list, k) => list.find(e => e[0] === k)[1], f1 = x => x.toFixed(1);
 function one(p, m) {
   const v = V[p][m], nm = `${nameOf(PARTS, p)} · ${nameOf(MODELS, m)}`;
@@ -132,10 +132,10 @@ for (const [p, pn] of PARTS) {
     b.addEventListener('click', () => { location.hash = `${p}-${m}`; show(`${p}-${m}`); }); cells[`${p}-${m}`] = b; mx.appendChild(b);
   }
 }
-let cur = '', last = 'tree-tf';
+const DEF = 'tree-smp'; // 처음 뜨는 표: 연구에서 성능 1위 조합
+let cur = '', last = DEF;
 function show(k) {
-  if (k === 'tree') k = 'tree-tf'; // 예전 주소
-  if (k !== 'all' && !cells[k]) k = 'tree-tf';
+  if (k !== 'all' && !cells[k]) k = DEF; // 예전 주소(#tree)·빈 주소도 여기로
   if (k === cur) return; cur = k;
   const isAll = k === 'all', v = isAll ? ALL : one(...k.split('-')); if (!isAll) last = k;
   bOne.setAttribute('aria-pressed', isAll ? 'false' : 'true'); bAll.setAttribute('aria-pressed', isAll ? 'true' : 'false');
@@ -148,7 +148,7 @@ bOne.addEventListener('click', () => { location.hash = last; show(last); });
 bAll.addEventListener('click', () => { location.hash = 'all'; show('all'); });
 window.addEventListener('hashchange', () => show(location.hash.slice(1)));
 vid.addEventListener('error', () => { vid.hidden = true; wait.hidden = false; wait.textContent = '영상을 불러오지 못했습니다. 페이지를 새로 고쳐 주세요.'; });
-show(location.hash.slice(1) || 'tree-tf');
+show(location.hash.slice(1) || DEF);
 </script>
 </body>
 </html>
