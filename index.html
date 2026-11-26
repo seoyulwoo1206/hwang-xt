@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="2022 월드컵 황희찬 역전골 장면의 xT 변화를 재구성한 영상 두 개">
+<meta name="description" content="2022 월드컵 황희찬 역전골 장면의 xT 변화를 xT 표 12개(분할 4 × 모델 3) 각각으로, 그리고 한 화면 비교로 재구성한 영상">
 <title>황희찬 역전골 xT</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Barlow+Condensed:wght@600;700&display=swap">
 <style>
-/* 배치: 한 화면 — 위에 경기 한 줄, 영상 고르기 두 칸, 그 아래 큰 영상과 설명. 폰에서 QR로 여는 걸 먼저 생각한 세로 한 줄 */
+/* 배치: 한 화면 — 위에 경기 한 줄, 보기 방식 두 칸, (표 하나로 볼 때) 분할 4 × 모델 3 고르기, 그 아래 큰 영상과 설명. 폰에서 QR로 여는 걸 먼저 생각한 세로 한 줄 */
 :root{
   /* 밝은 한 가지 모습: 연한 잔디빛 바탕 · 흰 카드 · 짙은 초록 글자 · 선명한 잔디색 강조 */
   --bg:#f2f8f0; --card:#ffffff; --line:#cfe1d3; --ink:#11261a; --dim:#4f6a5b;
@@ -36,7 +36,17 @@ h1{margin:0;font-weight:900;font-size:clamp(22px,5.6vw,32px);line-height:1.2;tex
 .pick button{box-shadow:0 1px 2px rgba(17,38,26,.06)}
 .pick button[aria-pressed="true"]{border-color:var(--accent);background:var(--sel);box-shadow:0 2px 10px rgba(12,138,71,.16)}
 .pick button[aria-pressed="true"] .n{color:var(--accent)}
-.pick button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pick button:focus-visible,.mx button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* 표 고르기: 줄 = 분할, 칸 = 모델, 숫자 = 황희찬이 받은 순간의 xT */
+.choose{display:grid;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 12px 14px}
+.choose .cap{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;justify-content:space-between}
+.choose .cap b{font-size:14px;font-weight:700}
+.choose .cap span{font-size:12px;color:var(--dim)}
+.mx{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:6px;align-items:stretch}
+.mx .mh{font-family:var(--f-num);font-weight:700;font-size:13px;letter-spacing:.08em;color:var(--dim);text-align:center;text-transform:uppercase;padding-bottom:2px}
+.mx .ml{font-family:var(--f-num);font-weight:700;font-size:15px;line-height:1.1;display:flex;align-items:center;padding-right:6px;color:var(--ink)}
+.mx button{all:unset;box-sizing:border-box;cursor:pointer;min-height:44px;display:grid;place-items:center;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);font-family:var(--f-num);font-weight:700;font-size:19px;color:var(--ink);font-variant-numeric:tabular-nums}
+.mx button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:#fff;box-shadow:0 2px 10px rgba(12,138,71,.22)}
 .stage{border-radius:12px;overflow:hidden;background:#0b1410;border:1px solid var(--line);box-shadow:0 6px 22px rgba(17,38,26,.14);aspect-ratio:16/9;max-width:100%;display:grid;place-items:center}
 .stage video{width:100%;height:100%;display:block;background:#000}
 .stage .wait{color:#b9c9be;font-size:14px;padding:16px;text-align:center}
@@ -49,7 +59,7 @@ h1{margin:0;font-weight:900;font-size:clamp(22px,5.6vw,32px);line-height:1.2;tex
 .src h2{margin:0;font-family:var(--f-num);font-weight:700;font-size:13px;letter-spacing:.12em;color:var(--accent)}
 .src ul{margin:0;padding:0;list-style:none;display:grid;gap:4px}
 .src li b{color:var(--ink);font-weight:700;margin-right:6px}
-@media (max-width:420px){.pick button{padding:10px 11px}.pick button .t{font-size:14px}}
+@media (max-width:420px){.pick button{padding:10px 11px}.pick button .t{font-size:14px}.mx .ml{font-size:14px}.mx button{font-size:18px}}
 </style>
 
 </head>
@@ -61,10 +71,15 @@ h1{margin:0;font-weight:900;font-size:clamp(22px,5.6vw,32px);line-height:1.2;tex
     <div class="score">대한민국 <b>2 : 1</b> 포르투갈 · 90+1분</div>
   </header>
 
-  <div class="pick" role="group" aria-label="영상 고르기">
-    <button id="pickTree" aria-pressed="true"><span class="n">영상 1</span><span class="t">표 하나로 보기</span><span class="s">결정 트리 × Transformer</span></button>
-    <button id="pickAll" aria-pressed="false"><span class="n">영상 2</span><span class="t">12개 표 비교</span><span class="s">분할 4 × 모델 3 + 기여도</span></button>
+  <div class="pick" role="group" aria-label="보기 방식">
+    <button id="pickOne" aria-pressed="true"><span class="n">표 하나씩</span><span class="t">표 하나로 보기</span><span class="s" id="oneSub">분할 4 × 모델 3 중에서 고르기</span></button>
+    <button id="pickAll" aria-pressed="false"><span class="n">한 화면에</span><span class="t">12개 표 비교</span><span class="s">분할 4 × 모델 3 + 기여도</span></button>
   </div>
+
+  <section class="choose" id="choose" aria-labelledby="chH">
+    <div class="cap"><b id="chH">xT 표 고르기 — 분할(줄) × 모델(칸)</b><span>숫자 = 황희찬이 패스를 받은 순간의 xT</span></div>
+    <div class="mx" id="mx"></div>
+  </section>
 
   <div class="stage"><video id="vid" controls playsinline preload="metadata" hidden></video><div class="wait" id="wait">영상을 불러오는 중입니다.</div></div>
 
@@ -73,7 +88,7 @@ h1{margin:0;font-weight:900;font-size:clamp(22px,5.6vw,32px);line-height:1.2;tex
     <p id="abText"></p>
   </div>
 
-  <p class="note">실제 중계 화면이 아니라, 경기 영상에서 선수와 공의 위치를 읽어 축구 게임 「킥오프 일레븐」의 화면으로 다시 그린 재구성입니다. 화면에 안 잡힌 선수와 일부 구간의 움직임은 추정입니다. xT(위협 기대값)는 공이 있는 자리에서 10초 안에 골이 날 확률을 뜻합니다.</p>
+  <p class="note">실제 중계 화면이 아니라, 경기 영상에서 선수와 공의 위치를 읽어 축구 게임 「킥오프 일레븐」의 화면으로 다시 그린 재구성입니다. 화면에 안 잡힌 선수와 일부 구간의 움직임은 추정입니다. xT(위협 기대값)는 공이 있는 자리에서 10초 안에 골이 날 확률을 뜻합니다. 영상 12개는 장면은 같고 xT 표만 다릅니다.</p>
 
   <section class="src" aria-labelledby="srcH">
     <h2 id="srcH">출처</h2>
@@ -87,25 +102,53 @@ h1{margin:0;font-weight:900;font-size:clamp(22px,5.6vw,32px);line-height:1.2;tex
 </div>
 
 <script>
-const VIDEOS = {
-  tree: { src: 'tree.mp4', poster: 'poster_tree.jpg', title: '영상 1 · 표 하나로 보기', text: '코너킥을 걷어낸 뒤 손흥민이 공을 잡아 몰고 올라가 황희찬에게 내주기까지, 공이 있는 자리의 xT가 <b>0.2% → 드리블 2.5% → 패스 7.2%</b>로 커지는 과정을 한 가지 표(결정 트리 분할 × Transformer 모델)로 보여 줍니다.' },
-  all: { src: 'all.mp4', poster: 'poster_all.jpg', title: '영상 2 · 12개 표 비교', text: '같은 장면을 분할 4가지 × 모델 3가지, <b>12개 표</b>로 한 화면에서 비교합니다. 12개 평균으로 드리블 +2.0%p, 패스 +4.2%p이고, 12개 중 9개 표에서 패스의 기여가 드리블보다 큽니다.' },
+/* 표마다의 값(%): [공 잡은 순간, 패스 직전, 받은 순간, 드리블이 올린 값, 패스가 올린 값] — 영상 속 숫자와 같다 (T 10초) */
+const PARTS = [['uniform', 'Uniform'], ['quadtree', 'Quadtree'], ['tree', 'Decision Tree'], ['threat', 'Threat Grid']];
+const MODELS = [['dtmc', 'DTMC'], ['smp', 'SMP'], ['tf', 'Transformer']];
+const V = {
+  uniform: { dtmc: [0.1, 1.4, 7.1, 1.3, 5.7], smp: [0.1, 1.3, 7.1, 1.2, 5.8], tf: [0.1, 1.4, 5.2, 1.3, 3.8] },
+  quadtree: { dtmc: [0.1, 3.7, 3.7, 3.6, 0], smp: [0.1, 3.6, 3.6, 3.5, 0], tf: [0.1, 4.4, 4.4, 4.3, 0] },
+  tree: { dtmc: [0.1, 1.5, 7.7, 1.4, 6.2], smp: [0.1, 1.3, 7.7, 1.2, 6.4], tf: [0.2, 2.5, 7.2, 2.4, 4.7] },
+  threat: { dtmc: [0.1, 1.3, 7.9, 1.2, 6.6], smp: [0.1, 1.3, 7.9, 1.2, 6.6], tf: [0.1, 1.1, 6.3, 1.0, 5.2] },
 };
-const vid = document.getElementById('vid'), wait = document.getElementById('wait');
-const btn = { tree: document.getElementById('pickTree'), all: document.getElementById('pickAll') };
-let cur = '';
-function show(k) {
-  if (!VIDEOS[k]) k = 'tree'; if (k === cur) return; cur = k; const v = VIDEOS[k];
-  for (const n in btn) btn[n].setAttribute('aria-pressed', n === k ? 'true' : 'false');
-  document.getElementById('abTitle').textContent = v.title; document.getElementById('abText').innerHTML = v.text;
-  if (v.src) { vid.pause(); if (v.poster) vid.poster = v.poster; else vid.removeAttribute('poster'); vid.src = v.src; vid.hidden = false; wait.hidden = true; vid.load(); }
-  else { vid.hidden = true; wait.hidden = false; wait.textContent = '영상이 아직 올라오지 않았습니다.'; }
+const ALL = { src: 'all.mp4', poster: 'poster_all.jpg', title: '12개 표 비교', text: '같은 장면을 분할 4가지 × 모델 3가지, <b>12개 표</b>로 한 화면에서 비교합니다. 12개 평균으로 드리블 +2.0%p, 패스 +4.2%p이고, 12개 중 9개 표에서 패스의 기여가 드리블보다 큽니다.' };
+const nameOf = (list, k) => list.find(e => e[0] === k)[1], f1 = x => x.toFixed(1);
+function one(p, m) {
+  const v = V[p][m], nm = `${nameOf(PARTS, p)} · ${nameOf(MODELS, m)}`;
+  let text = `코너킥을 걷어낸 뒤 손흥민이 공을 잡아 몰고 올라가 황희찬에게 내주기까지, 공이 있는 자리의 xT가 <b>${f1(v[0])}% → 드리블 ${f1(v[1])}% → 패스 ${f1(v[2])}%</b>로 커집니다. 이 표로는 드리블이 +${f1(v[3])}%p, 패스가 +${f1(v[4])}%p를 올렸습니다.`;
+  if (p === 'quadtree') text += ' Quadtree 분할에서는 패스를 준 곳과 받은 곳이 같은 구역이라 패스의 값이 0으로 나옵니다.';
+  return { src: `v/${p}_${m}.mp4`, poster: `v/${p}_${m}.jpg`, title: nm, text, nm };
 }
-btn.tree.addEventListener('click', () => { location.hash = 'tree'; show('tree'); });
-btn.all.addEventListener('click', () => { location.hash = 'all'; show('all'); });
+const vid = document.getElementById('vid'), wait = document.getElementById('wait'), mx = document.getElementById('mx');
+const bOne = document.getElementById('pickOne'), bAll = document.getElementById('pickAll');
+// 고르기 표: 머리줄(모델) + 분할마다 한 줄
+mx.appendChild(document.createElement('span'));
+for (const [, mn] of MODELS) { const h = document.createElement('span'); h.className = 'mh'; h.textContent = mn; mx.appendChild(h); }
+const cells = {};
+for (const [p, pn] of PARTS) {
+  const l = document.createElement('span'); l.className = 'ml'; l.textContent = pn; mx.appendChild(l);
+  for (const [m, mn] of MODELS) {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = f1(V[p][m][2]) + '%'; b.setAttribute('aria-label', `${pn}, ${mn}, 받은 순간 xT ${f1(V[p][m][2])}%`);
+    b.addEventListener('click', () => { location.hash = `${p}-${m}`; show(`${p}-${m}`); }); cells[`${p}-${m}`] = b; mx.appendChild(b);
+  }
+}
+let cur = '', last = 'tree-tf';
+function show(k) {
+  if (k === 'tree') k = 'tree-tf'; // 예전 주소
+  if (k !== 'all' && !cells[k]) k = 'tree-tf';
+  if (k === cur) return; cur = k;
+  const isAll = k === 'all', v = isAll ? ALL : one(...k.split('-')); if (!isAll) last = k;
+  bOne.setAttribute('aria-pressed', isAll ? 'false' : 'true'); bAll.setAttribute('aria-pressed', isAll ? 'true' : 'false');
+  document.getElementById('choose').hidden = isAll; document.getElementById('oneSub').textContent = one(...last.split('-')).nm;
+  for (const n in cells) cells[n].setAttribute('aria-pressed', n === k ? 'true' : 'false');
+  document.getElementById('abTitle').textContent = v.title; document.getElementById('abText').innerHTML = v.text;
+  vid.pause(); vid.poster = v.poster; vid.src = v.src; vid.hidden = false; wait.hidden = true; vid.load();
+}
+bOne.addEventListener('click', () => { location.hash = last; show(last); });
+bAll.addEventListener('click', () => { location.hash = 'all'; show('all'); });
 window.addEventListener('hashchange', () => show(location.hash.slice(1)));
 vid.addEventListener('error', () => { vid.hidden = true; wait.hidden = false; wait.textContent = '영상을 불러오지 못했습니다. 페이지를 새로 고쳐 주세요.'; });
-show(location.hash.slice(1) || 'tree');
+show(location.hash.slice(1) || 'tree-tf');
 </script>
 </body>
 </html>
